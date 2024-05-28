@@ -89,3 +89,40 @@ with models.DAG(
         region=REGION_ID,
         cluster_config=CLUSTER_CONFIG,
     )
+
+
+pyspark_task = DataprocSubmitJobOperator(
+
+        task_id="pyspark_task",
+
+        job=PYSPARK_JOB,
+
+        region=REGION_ID,
+
+        project_id=PROJECT_ID,
+
+    )
+
+    delete_cluster = DataprocDeleteClusterOperator(
+
+        task_id="delete_cluster",
+
+        project_id=PROJECT_ID,
+
+        cluster_name=CLUSTER_NAME,
+
+        region=REGION_ID,
+
+        trigger_rule=TriggerRule.ALL_DONE,
+
+    )
+
+    (
+
+        create_cluster
+
+        >> pyspark_task
+
+        >> delete_cluster
+
+    )
